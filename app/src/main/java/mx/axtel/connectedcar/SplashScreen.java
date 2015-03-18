@@ -14,7 +14,7 @@ public class SplashScreen extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        setToolbar();
+        //setToolbar();
     }
 
     public void setToolbar(){

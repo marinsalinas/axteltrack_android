@@ -1,17 +1,28 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/accent"
     tools:context=".SplashScreen">
 
-    <include
+    <!--<include
         layout="@layout/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />-->
+    <ImageView
+        android:layout_width="300dip"
+        android:layout_height="300dip"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_splash"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
-    <TextView android:text="@string/hello_world"
+
+    <TextView android:text="@string/app_name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/primaryDark"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:id="@+id/textView" />
 
-</LinearLayout>
+</RelativeLayout>
