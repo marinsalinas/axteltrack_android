@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="please wait"
+        android:text="@string/please_wait"
         android:id="@+id/tvWait"
         android:layout_below="@+id/progressCircle"
         android:layout_centerHorizontal="true" />
