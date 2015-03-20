@@ -5,31 +5,44 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:weightSum="2"
     tools:context="mx.axtel.connectedcar.LoginActivity">
 
 
 
     <ImageView
-        android:layout_width="144dip"
-        android:layout_height="144dip"
-        android:layout_marginTop="@dimen/abc_text_size_large_material"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_margin="@dimen/abc_text_size_large_material"
+        android:layout_weight="1"
         android:src="@drawable/ic_logo"
         android:id="@+id/logo"
         android:layout_gravity="center_horizontal" />
 
-    <!-- Login progress -->
-    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
-        android:id="@+id/login_progress"
-        android:layout_width="80dip"
-        android:layout_height="80dip"
-        android:layout_marginBottom="8dp"
+    <LinearLayout
+        android:id="@+id/layout_progress"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
         android:visibility="gone"
-        android:background="@color/accent" />
+        android:layout_height="fill_parent"
+        >
+        <!-- Login progress -->
+        <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+            android:id="@+id/login_progress"
+            android:layout_width="80dip"
+            android:layout_height="80dip"
+            android:layout_weight="1"
+            android:background="@color/accent" />
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:visibility="visible"
+        android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,34 +60,43 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_account"
-                    android:inputType="text" android:maxLines="1"
+                    android:inputType="text"
+                    android:drawableLeft="@drawable/ic_account"
+                    android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:singleLine="true" />
 
 
-                <com.rengwuxian.materialedittext.MaterialEditText android:id="@+id/email" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:hint="@string/prompt_username"
-                    android:inputType="text" android:maxLines="1"
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_username"
+                    android:drawableLeft="@drawable/ic_username"
+                    android:inputType="text"
+                    android:maxLines="1"
                     android:imeOptions="actionNext"
                     android:singleLine="true" />
 
-                <com.rengwuxian.materialedittext.MaterialEditText android:id="@+id/password" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:hint="@string/prompt_psswd"
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/password" android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_psswd"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_password"
                     android:maxLines="1" android:singleLine="true" />
 
                 <com.gc.materialdesign.views.ButtonFlat
                     android:id="@+id/email_sign_in_button"
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/action_sign_in_short"
                     android:background="@color/accent"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="end" />
 
             </LinearLayout>
         </LinearLayout>
