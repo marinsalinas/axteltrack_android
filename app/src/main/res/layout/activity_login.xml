@@ -25,6 +25,7 @@
         android:layout_gravity="bottom"
         android:layout_weight="1"
         android:visibility="gone"
+        android:orientation="vertical"
         android:layout_height="fill_parent"
         >
         <!-- Login progress -->
@@ -32,7 +33,7 @@
             android:id="@+id/login_progress"
             android:layout_width="80dip"
             android:layout_height="80dip"
-            android:layout_weight="1"
+            android:layout_gravity="center"
             android:background="@color/accent" />
     </LinearLayout>
 
@@ -50,7 +51,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/email_login_form"
+                android:id="@+id/user_login_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -68,7 +69,7 @@
 
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/email"
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
