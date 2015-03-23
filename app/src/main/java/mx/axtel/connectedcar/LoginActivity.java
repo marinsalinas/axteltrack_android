@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -36,10 +37,12 @@ import com.android.volley.toolbox.Volley;
 import com.gc.materialdesign.views.ButtonFlat;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
+import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONException;
@@ -50,6 +53,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mx.axtel.connectedcar.helpers.Session;
+import mx.axtel.connectedcar.models.User;
 
 
 public class LoginActivity extends Activity{
@@ -146,50 +152,54 @@ public class LoginActivity extends Activity{
             //Paso la validación de Strings
             showProgress(true);
 
-            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-            //Post Params.
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("account", account);
-            params.put("user", username);
-            params.put("password", password);
+                //Post Params.
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("account", account);
+                params.put("user", username);
+                params.put("password", password);
 
-            String URL =  getResources().getString(R.string.auth_login);
+                String URL =  getResources().getString(R.string.auth_login);
 
-            JsonObjectRequest req = new JsonObjectRequest(
-                    Request.Method.POST,
-                    URL,
-                    new JSONObject(params),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            showProgress(false);
-                            Log.d("Request", response.toString());
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            if(error.networkResponse.statusCode == 400){
-                                mAccountView.setError("BAD REQUEST");
-                            }else if(error.networkResponse.statusCode == 401){
-                                mAccountView.setError(getResources().getString(R.string.error_unable_login));
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.POST,
+                        URL,
+                        new JSONObject(params),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                showProgress(false);
+                                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                                Session session = new Session(getApplicationContext());
+                                Gson gson  = new Gson();
+                                session.createLoginSession(gson.fromJson(response.toString(), User.class));
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                finish();
                             }
-                            showProgress(false);
-                        }
-
-
-                    }) {
-                //Configurando Headers para que tome JSON
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json; charset=utf-8");
-                    return headers;
-                }
-            };
-
-            queue.add(req);
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if(error.networkResponse.statusCode == 400){
+                                    mAccountView.setError("BAD REQUEST");
+                                }else if(error.networkResponse.statusCode == 401){
+                                    mAccountView.setError(getResources().getString(R.string.error_unable_login));
+                                }else if(error.networkResponse.statusCode == 401){
+                                    mAccountView.setError(getResources().getString(R.string.error_forbidden));
+                                }
+                                showProgress(false);
+                            }
+                        }) {
+                    //Configurando Headers para que tome JSON
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Content-Type", "application/json; charset=utf-8");
+                        return headers;
+                    }
+                };
+                queue.add(req);
         }
     }
 

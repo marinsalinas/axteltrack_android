@@ -8,4 +8,5 @@
     <string name="prompt_account">account</string>
     <string name="prompt_username">username</string>
     <string name="prompt_psswd">password</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
