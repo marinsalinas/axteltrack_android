@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import mx.axtel.connectedcar.helpers.NetworkHelper;
 import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.User;
 
@@ -42,7 +43,7 @@ public class SplashScreen extends ActionBarActivity {
        }
 
 
-       if(session.isLoggedIn() && isOnline()){
+       if(session.isLoggedIn() && NetworkHelper.isOnline(getApplicationContext())){
            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
            //Post Params.
@@ -69,6 +70,7 @@ public class SplashScreen extends ActionBarActivity {
                    new Response.ErrorListener() {
                        @Override
                        public void onErrorResponse(VolleyError error) {
+                           session.logOut();
                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                            finish();
                        }
@@ -94,13 +96,6 @@ public class SplashScreen extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_my_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
-    }
-
-    public  boolean isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getApplicationContext().getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
     }
 
 }

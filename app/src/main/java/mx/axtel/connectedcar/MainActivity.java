@@ -1,10 +1,14 @@
 package mx.axtel.connectedcar;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import com.gc.materialdesign.views.ButtonFlat;
 
 import mx.axtel.connectedcar.helpers.Session;
 
@@ -22,6 +26,18 @@ public class MainActivity extends ActionBarActivity {
         TextView tv = (TextView)findViewById(R.id.tv_main);
 
         tv.setText(ss.getUserSession().getContactName());
+
+        ButtonFlat btn = (ButtonFlat) findViewById(R.id.buton_main);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if((new Session(getApplicationContext()).logOut())) {
+
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    finish();
+                }
+            }
+        });
 
 
 

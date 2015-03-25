@@ -30,6 +30,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -54,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mx.axtel.connectedcar.helpers.NetworkHelper;
 import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.User;
 
@@ -98,7 +100,13 @@ public class LoginActivity extends Activity{
         mUserSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                if(NetworkHelper.isOnline(getApplicationContext())){
+                    attemptLogin();
+                    return;
+                }
+
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.check_internet), Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -181,12 +189,21 @@ public class LoginActivity extends Activity{
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                if(error instanceof TimeoutError){
+                                    Toast.makeText(getApplicationContext(), R.string.check_internet, Toast.LENGTH_LONG).show();
+                                    showProgress(false);
+                                    return;
+                                }
+
+
                                 if(error.networkResponse.statusCode == 400){
                                     mAccountView.setError("BAD REQUEST");
                                 }else if(error.networkResponse.statusCode == 401){
                                     mAccountView.setError(getResources().getString(R.string.error_unable_login));
-                                }else if(error.networkResponse.statusCode == 401){
+                                }else if(error.networkResponse.statusCode == 403){
                                     mAccountView.setError(getResources().getString(R.string.error_forbidden));
+                                }else{
+                                    mAccountView.setError(getResources().getString(R.string.error_unable_login));
                                 }
                                 showProgress(false);
                             }

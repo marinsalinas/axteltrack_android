@@ -10,5 +10,16 @@
         android:id="@+id/tv_main"
         android:text="@string/hello_world" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <com.gc.materialdesign.views.ButtonFlat
+        android:id="@+id/buton_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/accent"
+        android:text="Logout"
+
+        android:layout_below="@+id/tv_main"
+        android:layout_toRightOf="@+id/tv_main"
+        android:layout_toEndOf="@+id/tv_main"
+        android:layout_marginTop="31dp" />
 
 </RelativeLayout>

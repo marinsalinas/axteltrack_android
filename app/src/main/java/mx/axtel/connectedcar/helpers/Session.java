@@ -43,5 +43,9 @@ public class Session {
             return pref.getBoolean(IS_LOGIN, false);
         }
 
-
+        public boolean logOut(){
+            this.editor.remove(KEY_USER);
+            this.editor.remove(IS_LOGIN);
+            return this.editor.commit();
+        }
 }
