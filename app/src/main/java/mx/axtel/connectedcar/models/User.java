@@ -23,7 +23,8 @@ public class User {
     private String lastLoginTime;
     @Expose
     private String description;
-
+    @Expose
+    private String token;
     /**
      *
      * @return
@@ -168,4 +169,21 @@ public class User {
         this.description = description;
     }
 
+    /**
+     *
+     * @return
+     * The token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     *
+     * @param token
+     * The token
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

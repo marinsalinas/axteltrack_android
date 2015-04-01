@@ -196,6 +196,7 @@ public class LoginActivity extends Activity{
                                 }
 
 
+
                                 if(error.networkResponse.statusCode == 400){
                                     mAccountView.setError("BAD REQUEST");
                                 }else if(error.networkResponse.statusCode == 401){

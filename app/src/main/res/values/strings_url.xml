@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="auth_login">http://104.236.63.58/api/v1/auth/</string>
+    <string name="device">http://104.236.63.58/api/v1/device/</string>
 </resources>

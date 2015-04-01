@@ -14,7 +14,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.gc.materialdesign.views.ButtonFlat;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
@@ -22,6 +40,7 @@ import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 import it.neokree.materialnavigationdrawer.elements.listeners.MaterialSectionListener;
 import mx.axtel.connectedcar.fragments.MainFragment;
 import mx.axtel.connectedcar.helpers.Session;
+import mx.axtel.connectedcar.models.Device;
 import mx.axtel.connectedcar.models.User;
 
 
@@ -32,7 +51,7 @@ public class MainActivity extends MaterialNavigationDrawer {
     public void init(Bundle bundle) {
         //Account SetUp
         Session ss = new Session(getApplicationContext());
-        User userSession = ss.getUserSession();
+        final User userSession = ss.getUserSession();
         View view = LayoutInflater.from(this).inflate(R.layout.drawer_header, null);
         TextView tvHeaderName = (TextView)view.findViewById(R.id.header_name);
         TextView tvHeaderEmail = (TextView) view.findViewById(R.id.header_email);
@@ -53,108 +72,85 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         //Enable Arrow Animation
         allowArrowAnimation();
+        setDrawerHeaderCustom(view);
 
         //First Section SetUp
-        MaterialSection section = newSection("Devices", new MainFragment());
+        final MaterialSection section = newSection("Devices", new MainFragment());
         section.setNotifications(99);
         addSection(section);
 
-
-
+        //Divisor Element
         addDivisor();
 
-        MaterialSection section1 = newSection("Device 1",R.drawable.ic_account, new MaterialSectionListener() {
+        //Prepare Requets
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+
+        String URL =  getResources().getString(R.string.device);
+
+        JsonObjectRequest req = new JsonObjectRequest(
+                Request.Method.GET,
+                URL,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                        Gson gson  = new Gson();
+                        try {
+                           Device[] devices =  gson.fromJson(response.getString("devices"), Device[].class);
+                            section.setNotifications(devices.length);
+                          for(final Device device : devices){
+                               MaterialSection section1 = newSection(device.getDisplayName(),R.drawable.ic_account, new MaterialSectionListener() {
+                                   @Override
+                                   public void onClick(MaterialSection materialSection) {
+                                       Toast.makeText(getApplicationContext(), device.getDisplayName(), Toast.LENGTH_SHORT).show();
+                                   }
+                               });
+                               addSection(section1);
+                           }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if(error instanceof TimeoutError){
+                            Toast.makeText(getApplicationContext(), R.string.check_internet, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        Toast.makeText(getApplicationContext(), "ERROR" + error.networkResponse.statusCode, Toast.LENGTH_SHORT).show();
+
+                        /*if(error.networkResponse.statusCode == 400){
+                            mAccountView.setError("BAD REQUEST");
+                        }else if(error.networkResponse.statusCode == 401){
+                            mAccountView.setError(getResources().getString(R.string.error_unable_login));
+                        }else if(error.networkResponse.statusCode == 403){
+                            mAccountView.setError(getResources().getString(R.string.error_forbidden));
+                        }else{
+                            mAccountView.setError(getResources().getString(R.string.error_unable_login));
+                        }
+                        showProgress(false);
+                        */
+                    }
+                }) {
+            //Configurando Headers para que tome JSON
             @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 1", Toast.LENGTH_SHORT).show();
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                headers.put("Authorization", userSession.getToken());
+                return headers;
             }
-        });
-        addSection(section1);
-
-        MaterialSection section2 = newSection("Device 2", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 2", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section2);
-
-        MaterialSection section3 = newSection("Device 3", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 3", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section3);
-
-        MaterialSection section4 = newSection("Device 4", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 4", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section4);
-
-        MaterialSection section5 = newSection("Device 5", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 5", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section5);
-
-        MaterialSection section6 = newSection("Device 6", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 6", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section6);
-
-        MaterialSection section7 = newSection("Device 7", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 7", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section7);
-
-        MaterialSection section8 = newSection("Device 8", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 8", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section8);
-
-        MaterialSection section9 = newSection("Device 9", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 9", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section9);
-
-        MaterialSection section10 = newSection("Device 10", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 10", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section10);
-
-
-        MaterialSection section11 = newSection("Device11", new MaterialSectionListener() {
-            @Override
-            public void onClick(MaterialSection materialSection) {
-                Toast.makeText(getApplicationContext(), "Device 11", Toast.LENGTH_SHORT).show();
-            }
-        });
-        addSection(section11);
-
-
-        setDrawerHeaderCustom(view);
-        closeDrawer();
+        };
+        Toast.makeText(getApplicationContext(), userSession.getToken(), Toast.LENGTH_SHORT).show();
+        queue.add(req);
     }
 
 
