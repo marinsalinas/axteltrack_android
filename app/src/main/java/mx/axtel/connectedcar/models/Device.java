@@ -18,19 +18,19 @@ public class Device {
     @Expose
     private Object simPhoneNumber;
     @Expose
-    private String lastValidLatitude;
+    private double lastValidLatitude;
     @Expose
-    private String lastValidLongitude;
+    private double lastValidLongitude;
     @Expose
-    private String lastValidHeading;
+    private double lastValidHeading;
     @Expose
     private String lastGPSTimestamp;
     @Expose
     private String lastEventTimestamp;
     @Expose
-    private String lastOdometerKM;
+    private double lastOdometerKM;
     @Expose
-    private String isActive;
+    private boolean isActive;
     @Expose
     private String displayName;
     @Expose
@@ -128,59 +128,7 @@ public class Device {
         this.simPhoneNumber = simPhoneNumber;
     }
 
-    /**
-     *
-     * @return
-     * The lastValidLatitude
-     */
-    public String getLastValidLatitude() {
-        return lastValidLatitude;
-    }
 
-    /**
-     *
-     * @param lastValidLatitude
-     * The lastValidLatitude
-     */
-    public void setLastValidLatitude(String lastValidLatitude) {
-        this.lastValidLatitude = lastValidLatitude;
-    }
-
-    /**
-     *
-     * @return
-     * The lastValidLongitude
-     */
-    public String getLastValidLongitude() {
-        return lastValidLongitude;
-    }
-
-    /**
-     *
-     * @param lastValidLongitude
-     * The lastValidLongitude
-     */
-    public void setLastValidLongitude(String lastValidLongitude) {
-        this.lastValidLongitude = lastValidLongitude;
-    }
-
-    /**
-     *
-     * @return
-     * The lastValidHeading
-     */
-    public String getLastValidHeading() {
-        return lastValidHeading;
-    }
-
-    /**
-     *
-     * @param lastValidHeading
-     * The lastValidHeading
-     */
-    public void setLastValidHeading(String lastValidHeading) {
-        this.lastValidHeading = lastValidHeading;
-    }
 
     /**
      *
@@ -218,41 +166,6 @@ public class Device {
         this.lastEventTimestamp = lastEventTimestamp;
     }
 
-    /**
-     *
-     * @return
-     * The lastOdometerKM
-     */
-    public String getLastOdometerKM() {
-        return lastOdometerKM;
-    }
-
-    /**
-     *
-     * @param lastOdometerKM
-     * The lastOdometerKM
-     */
-    public void setLastOdometerKM(String lastOdometerKM) {
-        this.lastOdometerKM = lastOdometerKM;
-    }
-
-    /**
-     *
-     * @return
-     * The isActive
-     */
-    public String getIsActive() {
-        return isActive;
-    }
-
-    /**
-     *
-     * @param isActive
-     * The isActive
-     */
-    public void setIsActive(String isActive) {
-        this.isActive = isActive;
-    }
 
     /**
      *
@@ -308,4 +221,44 @@ public class Device {
         this.lastUpdateTime = lastUpdateTime;
     }
 
+    public void setLastValidLatitude(double lastValidLatitude) {
+        this.lastValidLatitude = lastValidLatitude;
+    }
+
+    public void setLastValidLongitude(double lastValidLongitude) {
+        this.lastValidLongitude = lastValidLongitude;
+    }
+
+    public void setLastValidHeading(double lastValidHeading) {
+        this.lastValidHeading = lastValidHeading;
+    }
+
+    public void setLastOdometerKM(double lastOdometerKM) {
+        this.lastOdometerKM = lastOdometerKM;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+
+    public double getLastValidLatitude() {
+        return lastValidLatitude;
+    }
+
+    public double getLastValidLongitude() {
+        return lastValidLongitude;
+    }
+
+    public double getLastValidHeading() {
+        return lastValidHeading;
+    }
+
+    public double getLastOdometerKM() {
+        return lastOdometerKM;
+    }
 }

@@ -10,4 +10,25 @@
     <string name="prompt_username">username</string>
     <string name="prompt_psswd">password</string>
     <string name="title_activity_main">MainActivity</string>
+
+
+
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="plus_sign_out">Switch Google+ account</string>
+    <string name="plus_disconnect">Disconnect from Google+</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_unable_login">Unable to sign in, verify that the fields are correct</string>
+    <string name="error_forbidden">You do not have permission to perform this request.</string>
+    <string name="devices">Devices</string>
+
+
 </resources>
