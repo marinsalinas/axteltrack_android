@@ -26,7 +26,7 @@ public class MainFragment extends Fragment {
         Session ss = new Session(getActivity().getApplicationContext());
 
 
-
+/*
         TextView tv = (TextView) view.findViewById(R.id.tv_main);
 
         tv.setText(ss.getUserSession().getContactName());
@@ -41,7 +41,7 @@ public class MainFragment extends Fragment {
                     getActivity().finish();
                 }
             }
-        });
+        });*/
         return view;
 
     }

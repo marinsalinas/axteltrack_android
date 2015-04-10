@@ -2,6 +2,8 @@ package mx.axtel.connectedcar.models;
 
 import com.google.gson.annotations.Expose;
 
+import java.util.Date;
+
 /**
  * Created by marinsalinas on 4/1/15.
  */
@@ -24,9 +26,9 @@ public class Device {
     @Expose
     private double lastValidHeading;
     @Expose
-    private String lastGPSTimestamp;
+    private Date lastGPSTimestamp;
     @Expose
-    private String lastEventTimestamp;
+    private Date lastEventTimestamp;
     @Expose
     private double lastOdometerKM;
     @Expose
@@ -36,7 +38,7 @@ public class Device {
     @Expose
     private String description;
     @Expose
-    private String lastUpdateTime;
+    private Date lastUpdateTime;
 
     /**
      *
@@ -135,7 +137,7 @@ public class Device {
      * @return
      * The lastGPSTimestamp
      */
-    public String getLastGPSTimestamp() {
+    public Date getLastGPSTimestamp() {
         return lastGPSTimestamp;
     }
 
@@ -144,7 +146,7 @@ public class Device {
      * @param lastGPSTimestamp
      * The lastGPSTimestamp
      */
-    public void setLastGPSTimestamp(String lastGPSTimestamp) {
+    public void setLastGPSTimestamp(Date lastGPSTimestamp) {
         this.lastGPSTimestamp = lastGPSTimestamp;
     }
 
@@ -153,7 +155,7 @@ public class Device {
      * @return
      * The lastEventTimestamp
      */
-    public String getLastEventTimestamp() {
+    public Date getLastEventTimestamp() {
         return lastEventTimestamp;
     }
 
@@ -162,7 +164,7 @@ public class Device {
      * @param lastEventTimestamp
      * The lastEventTimestamp
      */
-    public void setLastEventTimestamp(String lastEventTimestamp) {
+    public void setLastEventTimestamp(Date lastEventTimestamp) {
         this.lastEventTimestamp = lastEventTimestamp;
     }
 
@@ -208,7 +210,7 @@ public class Device {
      * @return
      * The lastUpdateTime
      */
-    public String getLastUpdateTime() {
+    public Date getLastUpdateTime() {
         return lastUpdateTime;
     }
 
@@ -217,7 +219,7 @@ public class Device {
      * @param lastUpdateTime
      * The lastUpdateTime
      */
-    public void setLastUpdateTime(String lastUpdateTime) {
+    public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
     }
 

@@ -1,86 +1,190 @@
 package mx.axtel.connectedcar;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.w3c.dom.Text;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Date;
 
-import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
-import it.neokree.materialnavigationdrawer.elements.MaterialSection;
-import it.neokree.materialnavigationdrawer.elements.listeners.MaterialSectionListener;
-import mx.axtel.connectedcar.fragments.MainFragment;
+import mx.axtel.connectedcar.adapters.DrawerAdapter;
 import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.Device;
 import mx.axtel.connectedcar.models.User;
 
 
-public class MainActivity extends MaterialNavigationDrawer implements OnMapReadyCallback {
-    private Device[] devices;
-    private MaterialSection deviceCountSection;
-    private GoogleMap googleMap;
-    private User userSession;
+public class MainActivity extends ActionBarActivity implements RecyclerItemClicked{
+
+
+    String TITLES[] = {"Home","Events","Mail","Shop","Travel","Home","Events","Mail","Shop","Travel"};
+    int ICONS[] = {R.drawable.ic_account,
+            R.drawable.ic_password,R.drawable.ic_username,
+            R.drawable.ic_account,R.drawable.ic_username,
+            R.drawable.ic_account,R.drawable.ic_password,
+            R.drawable.ic_username,R.drawable.ic_account,
+            R.drawable.ic_username};
+    private boolean mSlideSate = false;
+
+    private Toolbar toolbar;                              // Declaring the Toolbar Object
+    private User userSesion;
+    RecyclerView mRecyclerView;                           // Declaring RecyclerView
+    RecyclerView.Adapter mAdapter;                        // Declaring Adapter For Recycler View
+    RecyclerView.LayoutManager mLayoutManager;            // Declaring Layout Manager as a linear layout manager
+    DrawerLayout Drawer;                                  // Declaring DrawerLayout
+    ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
+    ArrayList<Device> devices;
     @Override
-    public void init(Bundle bundle) {
-        //Account SetUp
-        Session ss = new Session(getApplicationContext());
-        userSession = ss.getUserSession();
-        View view = LayoutInflater.from(this).inflate(R.layout.drawer_header, null);
-        TextView tvHeaderName = (TextView)view.findViewById(R.id.header_name);
-        TextView tvHeaderEmail = (TextView) view.findViewById(R.id.header_email);
-        TextView tvHeaderPhone = (TextView) view.findViewById(R.id.header_phone);
-        ImageView iViewHeader = (ImageView) view.findViewById(R.id.circleView);
-        tvHeaderName.setText(userSession.getContactName());
-        tvHeaderEmail.setText(userSession.getContactEmail());
-        tvHeaderPhone.setText(userSession.getContactPhone());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
 
-        //Build a text drawable
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(getCapitals(userSession.getContactName()), Color.RED);
+        /*Get the User by Session*/
+        userSesion = new Session(this).getUserSession();
 
-        iViewHeader.setImageDrawable(drawable);
+        /*Inititalize Devices Arraylist*/
+        devices = new ArrayList<>();
 
-        //Enable Arrow Animation
-        allowArrowAnimation();
-        setDrawerHeaderCustom(view);
+        //Dummy
+        Device dev = new Device();
+        dev.setAccountID("integracion");
+        dev.setActive(true);
+        dev.setDescription("Vehiculo Patito");
+        dev.setDeviceID("178698276921");
+        dev.setDisplayName("Marin Car");
+        dev.setGroupID("Grupito");
+        dev.setLastGPSTimestamp(new Date());
+        dev.setLastEventTimestamp(new Date());
+        dev.setLastOdometerKM(113.45);
+        dev.setLastUpdateTime(new Date());
+        dev.setLastValidHeading(35.55);
+        dev.setLastValidLatitude(25.2321);
+        dev.setLastValidLongitude(-100.434);
 
-       MapFragment mapFragment = new MapFragment();
-        mapFragment.getMapAsync(this);
+        devices.add(dev);
 
-        //First Section SetUp
-       deviceCountSection = newSection(getResources().getString(R.string.devices),mapFragment);
-        addSection(deviceCountSection);
+        /* Assinging the toolbar object ot the view
+        and setting the the Action bar to our toolbar
+         */
+        toolbar = (Toolbar) findViewById(R.id.activity_my_toolbar);
+        toolbar.setTitle(userSesion.getAccount());
+        setSupportActionBar(toolbar);
 
-        //Divisor Element
-        addDivisor();
+
+        /*Set Account information to Navigation Drawer Header*/
+        setAccountHeader();
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView); // Assigning the RecyclerView Object to the xml View
+        mRecyclerView.setHasFixedSize(true);                            // Letting the system know that the list objects are of fixed size
+        mAdapter = new DrawerAdapter(devices, this);       // Creating the Adapter of MyAdapter class(which we are going to see in a bit)
+        mRecyclerView.setAdapter(mAdapter);                              // Setting the adapter to RecyclerView
+
+        mLayoutManager = new LinearLayoutManager(this);                 // Creating a layout Manager
+        mRecyclerView.setLayoutManager(mLayoutManager);                 // Setting the layout Manager
+
+
+        TITLES[0] = "CASA";
+        mAdapter.notifyDataSetChanged();
+
+
+
+
+        Drawer = (DrawerLayout) findViewById(R.id.DrawerLayout);        // Drawer object Assigned to the view
+        mDrawerToggle = new ActionBarDrawerToggle(this,Drawer,toolbar,R.string.openDrawer,R.string.closeDrawer){
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                mSlideSate= !mSlideSate;
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                mSlideSate= !mSlideSate;
+            }
+
+
+
+        }; // Drawer Toggle Object Made
+
+        Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
+        mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }else if(id == R.id.action_logout){
+            new Session(this).logOut();
+            startActivity(new Intent(getApplicationContext(), SplashScreen.class));
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void rItemClicked(View view, int position) {
+        toogleDrawer();
+        Toast.makeText(getApplicationContext(), position + "" , Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void setAccountHeader(){
+
+        View headerView = findViewById(R.id.drw_header);
+
+
+        TextView name = (TextView) headerView.findViewById(R.id.header_name);         // Creating Text View object from header.xml for name
+        TextView email = (TextView) headerView.findViewById(R.id.header_email);       // Creating Text View object from header.xml for email
+        ImageView imageProfile = (ImageView) headerView.findViewById(R.id.circleView);// Creating Image view object from header.xml for profile pic
+        TextView phone = (TextView) headerView.findViewById(R.id.header_phone);
+
+        name.setText(userSesion.getContactName());
+        email.setText(userSesion.getContactEmail());
+        phone.setText(userSesion.getContactPhone());
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(getCapitals(userSesion.getContactName()), Color.RED);
+        imageProfile.setImageDrawable(drawable);
+
+
+    }
 
     private String getCapitals(String name){
         String[] names = name.split(" ");
@@ -97,88 +201,14 @@ public class MainActivity extends MaterialNavigationDrawer implements OnMapReady
         return capitals;
     }
 
-    @Override
-    public void onMapReady(final GoogleMap googleMap) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(25.6667, -100.3167)));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
-
-        //Prepare Requests
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
-        JsonObjectRequest req = new JsonObjectRequest(
-                Request.Method.GET,
-                getResources().getString(R.string.device),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Gson gson  = new Gson();
-                        try {
-                            devices =  gson.fromJson(response.getString("devices"), Device[].class);
-                            deviceCountSection.setNotifications(devices.length);
-                            for(final Device device : devices){
-                                if(device.isActive()){
-                                    MaterialSection section1 = newSection(device.getDeviceID(),R.drawable.circle_green, new MaterialSectionListener() {
-                                        @Override
-                                        public void onClick(MaterialSection materialSection) {
-                                            Toast.makeText(getApplicationContext(), device.getDeviceID(), Toast.LENGTH_SHORT).show();
-                                            LatLng latLng = new LatLng(device.getLastValidLatitude(), device.getLastValidLongitude());
-                                            googleMap.setMyLocationEnabled(true);
-                                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-
-                                            googleMap.addMarker(new MarkerOptions()
-                                                            .title(device.getDeviceID())
-                                                            .snippet(device.getDescription())
-                                                            .position(latLng)
-                                            );
-
-                                        }
-                                    });
-                                    ImageView sectionImageView =  ((ImageView)section1.getView().findViewById(it.neokree.materialnavigationdrawer.R.id.section_icon));
-                                    sectionImageView.setColorFilter(R.color.green);
-                                    sectionImageView.setAlpha(1.0F);
-                                    addSection(section1);
-                                }
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error instanceof TimeoutError){
-                            Toast.makeText(getApplicationContext(), R.string.check_internet, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        Toast.makeText(getApplicationContext(), "ERROR" + error.networkResponse.statusCode, Toast.LENGTH_SHORT).show();
-
-                        /*if(error.networkResponse.statusCode == 400){
-                            mAccountView.setError("BAD REQUEST");
-                        }else if(error.networkResponse.statusCode == 401){
-                            mAccountView.setError(getResources().getString(R.string.error_unable_login));
-                        }else if(error.networkResponse.statusCode == 403){
-                            mAccountView.setError(getResources().getString(R.string.error_forbidden));
-                        }else{
-                            mAccountView.setError(getResources().getString(R.string.error_unable_login));
-                        }
-                        showProgress(false);
-                        */
-
-                    }
-                }) {
-            //Configurando Headers para que tome JSON
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                headers.put("Authorization", userSession.getToken());
-                return headers;
-            }
-        };
-        queue.add(req);
+    private void toogleDrawer(){
+        if(mSlideSate){
+            Drawer.closeDrawer(Gravity.START);
+        }else{
+            Drawer.openDrawer(Gravity.START);
+        }
     }
+
+
 }
+

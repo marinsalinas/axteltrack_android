@@ -178,7 +178,7 @@ public class LoginActivity extends Activity{
                             @Override
                             public void onResponse(JSONObject response) {
                                 showProgress(false);
-                                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
                                 Session session = new Session(getApplicationContext());
                                 Gson gson  = new Gson();
                                 session.createLoginSession(gson.fromJson(response.toString(), User.class));
