@@ -2,6 +2,7 @@ package mx.axtel.connectedcar;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,7 +76,12 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
     ArrayList<Device> devices;
     ArrayList<Marker> markers;
-    int itemSelected = -1;
+    private  static int itemSelected = -1;
+    Handler handler;
+    private Runnable runnable;
+    private static boolean first = true;
+    private static CameraPosition cameraPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,23 +98,6 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
         prettyTime = new PrettyTime();
 
-        //Dummy
-        Device dev = new Device();
-        dev.setAccountID("integracion");
-        dev.setActive(true);
-        dev.setDescription("Vehiculo Patito");
-        dev.setDeviceID("178698276921");
-        dev.setDisplayName("Marin Car");
-        dev.setGroupID("Grupito");
-        dev.setLastGPSTimestamp(new Date());
-        dev.setLastEventTimestamp(new Date());
-        dev.setLastOdometerKM(113.45);
-        dev.setLastUpdateTime(new Date());
-        dev.setLastValidHeading(35.55);
-        dev.setLastValidLatitude(25.2321);
-        dev.setLastValidLongitude(-100.434);
-
-        devices.add(dev);
 
         /* Assinging the toolbar object ot the view
         and setting the the Action bar to our toolbar
@@ -121,7 +111,9 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
             gMap = mapFragment.getMap();
             gMap.setOnMarkerClickListener(this);
             gMap.setMyLocationEnabled(true);
-            gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(25.6667, -100.3167), 15F, 2F, 0F)));
+            gMap.setBuildingsEnabled(true);
+
+            //gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(25.6667, -100.3167), 15F, 2F, 0F)));
         }
 
         /*Set Account information to Navigation Drawer Header*/
@@ -158,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         Drawer.setDrawerListener(mDrawerToggle); // Drawer Listener set to the Drawer toggle
         mDrawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
-        getDevices();
+       // getDevices();
 
     }
 
@@ -262,11 +254,6 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                GsonBuilder gBuilder= new GsonBuilder();
-                                gBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-                                Gson gson = gBuilder.create();
-                                PrettyTime prettyTime= new PrettyTime();
-
                                 try {
                                     JSONArray devs = response.getJSONArray("devices");
                                     if(devices == null){
@@ -287,11 +274,9 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                                                     .title(device.getDeviceID())
                                                     .snippet(prettyTime.format(device.getLastGPSTimestamp()))
                                                     .position(latLng)
-                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow))
+                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow_red))
                                                     .flat(true)
                                                     .rotation((float) device.getLastValidHeading()));
-
-
 
                                             devices.add(device);
                                             markers.add(marker);
@@ -302,14 +287,19 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
 
                                     toolbar.setTitle("("+devices.size()+") "+userSession.getAccount());
 
-
-                                    gMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 23));
-
+                                    if(first) {
+                                        gMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 23));
+                                        first = !first;
+                                    }else{
+                                       // gMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                                        if(itemSelected != -1){
+                                            markers.get(itemSelected).showInfoWindow();
+                                            gMap.moveCamera(CameraUpdateFactory.newLatLng(markers.get(itemSelected).getPosition()));
+                                        }
+                                    }
 
                                     //Refresh RecyclerView From new DataSet
                                     mAdapter.notifyDataSetChanged();
-
-
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -360,5 +350,46 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         itemSelected = markers.indexOf(marker);
         return false;
     }
+
+    @Override
+    public void onResume(){
+     super.onResume();
+        Log.e("RESUME", "RESUME");
+        getDevices();
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "DEVICEs", Toast.LENGTH_SHORT).show();
+                getDevices();
+                handler.postDelayed(this, 30000);
+            }
+        };
+        handler.postDelayed(runnable, 30000);
+
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.e("STOP", "STOP");
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        handler.removeCallbacks(runnable);
+        Log.e("PAUSE", "PAUSE");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+         cameraPosition = gMap.getCameraPosition();
+        Log.e("DESTROY", "DESTROY");
+    }
+
+
+
 }
 
