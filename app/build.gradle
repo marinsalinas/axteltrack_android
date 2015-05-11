@@ -31,6 +31,7 @@ dependencies {
     compile 'com.balysv:material-ripple:1.0.1'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
+    compile 'com.google.maps.android:android-maps-utils:0.3+'
 }
 
 

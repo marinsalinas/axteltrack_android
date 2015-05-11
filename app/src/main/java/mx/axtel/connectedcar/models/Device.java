@@ -2,12 +2,13 @@ package mx.axtel.connectedcar.models;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by marinsalinas on 4/1/15.
  */
-public class Device {
+public class Device implements Serializable {
 
     @Expose
     private String accountID;
@@ -25,6 +26,10 @@ public class Device {
     private double lastValidLongitude;
     @Expose
     private double lastValidHeading;
+
+    @Expose
+    private double lastValidSpeedKPH;
+
     @Expose
     private Date lastGPSTimestamp;
     @Expose
@@ -262,5 +267,13 @@ public class Device {
 
     public double getLastOdometerKM() {
         return lastOdometerKM;
+    }
+
+    public double getLastValidSpeedKPH() {
+        return lastValidSpeedKPH;
+    }
+
+    public void setLastValidSpeedKPH(double lastValidSpeedKPH) {
+        this.lastValidSpeedKPH = lastValidSpeedKPH;
     }
 }

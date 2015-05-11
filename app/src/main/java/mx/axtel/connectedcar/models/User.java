@@ -2,10 +2,12 @@ package mx.axtel.connectedcar.models;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+
 /**
  * Created by marinsalinas on 3/23/15.
  */
-public class User {
+public class User implements Serializable {
 
     @Expose
     private String account;

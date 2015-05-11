@@ -92,9 +92,14 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
     // which view type is being created 1 for item row
     @Override
     public void onBindViewHolder(DrawerAdapter.ViewHolder holder, int position) {
-            // position by 1 and pass it to the holder while setting the text and image
+        // position by 1 and pass it to the holder while setting the text and image
+        if (devices.get(position).getDescription() != null && devices.get(position).getDescription() != "") {
+            holder.textView.setText(devices.get(position).getDescription());
+        } else if (devices.get(position).getDisplayName() != null && devices.get(position).getDisplayName() != ""){
+            holder.textView.setText(devices.get(position).getDisplayName()); // Setting the Text with the array of our Titles
+        }else {
             holder.textView.setText(devices.get(position).getDeviceID()); // Setting the Text with the array of our Titles
-
+        }
         int resId = getResIdFromDate(devices.get(position).getLastGPSTimestamp());
             holder.imageView.setImageResource(resId);// Settimg the image with array of our icons
 
@@ -116,12 +121,17 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
     }
 
     private int getResIdFromDate(Date date){
-        if(Calendar.getInstance().getTime().getTime() - date.getTime() < 300000L){
-            return  R.drawable.circle_green;
-        }else if(Calendar.getInstance().getTime().getTime() - date.getTime() < 3600000L){
-            return  R.drawable.circle_ambar;
-        }else{
-            return  R.drawable.circle_red;
+        if(date == null){
+            return R.drawable.circle_null;
+        }
+
+        long delta = (new java.util.Date()).getTime() - date.getTime();
+        if (delta > 0 && delta < 300000) {
+            return R.drawable.circle_100;
+        } else if (delta >= 300000 && delta < 3600000) {
+            return R.drawable.circle_50;
+        } else {
+            return R.drawable.circle_25;
         }
     }
 

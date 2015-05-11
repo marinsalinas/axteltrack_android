@@ -2,4 +2,7 @@
 <resources>
     <string name="auth_login">http://104.236.63.58/api/v1/auth/</string>
     <string name="device">http://104.236.63.58/api/v1/device/</string>
+
+    <string name="mobilizeURL">http://104.236.63.58/api/v1/mobilize/</string>
+    <string name="immobilizeURL">http://104.236.63.58/api/v1/immobilize/</string>
 </resources>

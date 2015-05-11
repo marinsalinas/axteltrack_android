@@ -3,6 +3,7 @@ package mx.axtel.connectedcar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -31,39 +32,36 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.maps.android.ui.IconGenerator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import mx.axtel.connectedcar.adapters.DrawerAdapter;
+import mx.axtel.connectedcar.fragments.InfoDialogFragment;
+import mx.axtel.connectedcar.helpers.NetworkHelper;
 import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.Device;
 import mx.axtel.connectedcar.models.User;
 
 
-public class MainActivity extends ActionBarActivity implements RecyclerItemClicked, GoogleMap.OnMarkerClickListener{
+public class MainActivity extends ActionBarActivity implements RecyclerItemClicked, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener{
 
     private boolean mSlideSate = false;
-
     private Toolbar toolbar;                              // Declaring the Toolbar Object
     private User userSession;
     private Gson gson;
@@ -76,11 +74,11 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     ActionBarDrawerToggle mDrawerToggle;                  // Declaring Action Bar Drawer Toggle
     ArrayList<Device> devices;
     ArrayList<Marker> markers;
+    ArrayList<Marker> labels;
     private  static int itemSelected = -1;
     Handler handler;
     private Runnable runnable;
     private static boolean first = true;
-    private static CameraPosition cameraPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +110,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
             gMap.setOnMarkerClickListener(this);
             gMap.setMyLocationEnabled(true);
             gMap.setBuildingsEnabled(true);
+            gMap.setOnInfoWindowClickListener(this);
 
             //gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(new LatLng(25.6667, -100.3167), 15F, 2F, 0F)));
         }
@@ -187,12 +186,10 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         toogleDrawer();
         itemSelected = position;
         if(gMap !=null){
-
             gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(markers.get(position).getPosition(), 15F, 2F, 0F)));
             markers.get(position).showInfoWindow();
-            //markers.add(marker);
         }
-        Toast.makeText(getApplicationContext(), position + "" , Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),  "Mostrar " , Toast.LENGTH_SHORT).show();
     }
 
 
@@ -218,8 +215,10 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     }
 
     private String getCapitals(String name){
+        if(name == null) return "AX";
+
         String[] names = name.split(" ");
-        String capitals = null;
+        String capitals;
         if(names.length == 1 || names.length > 4){
             capitals = names[0].charAt(0) + "";
         }else if(names.length == 4){
@@ -242,6 +241,15 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
 
 
     private void getDevices(){
+
+        if(!NetworkHelper.isOnline(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), getString(R.string.check_internet), Toast.LENGTH_SHORT).show();
+
+            return;
+        }
+
+
+
         //Prepare Requests
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
@@ -256,30 +264,52 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                             public void run() {
                                 try {
                                     JSONArray devs = response.getJSONArray("devices");
-                                    if(devices == null){
-                                        devices = new ArrayList<>();
-                                    }
-                                    if(markers == null){
-                                        markers = new ArrayList<>();
-                                    }
-                                    markers.clear();
+                                    if(devices == null) devices = new ArrayList<>();
+                                    if(markers == null) markers = new ArrayList<>();
+                                    if(labels == null) labels = new ArrayList<>();
+
+
+                                    clearMarkers();
                                     devices.clear();
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                     for(int i = 0; i <devs.length() ; i++){
                                         final Device device = gson.fromJson(devs.getJSONObject(i).toString(), Device.class);
                                         if(device.isActive()){
-
+                                             int iconArrow = getArrowfromSpeed(device.getLastValidSpeedKPH());
                                             LatLng latLng = new LatLng(device.getLastValidLatitude(), device.getLastValidLongitude());
                                             Marker marker = gMap.addMarker(new MarkerOptions()
-                                                    .title(device.getDeviceID())
+                                                    .title(device.getDescription())
                                                     .snippet(prettyTime.format(device.getLastGPSTimestamp()))
                                                     .position(latLng)
-                                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_arrow_red))
+                                                    .icon(BitmapDescriptorFactory.fromResource(iconArrow))
                                                     .flat(true)
                                                     .rotation((float) device.getLastValidHeading()));
 
+                                            IconGenerator miConGenerator = new IconGenerator(getApplicationContext());
+                                            String title;
+                                            if(device.getDescription() != null && !device.getDescription().equals("")){
+                                                title = device.getDescription();
+                                            }else
+                                            if(device.getDisplayName() != null && !device.getDisplayName().equals("")){
+                                                title = device.getDisplayName();
+                                            }else{
+                                                title =  device.getDeviceID();
+                                            }
+                                            miConGenerator.setColor(getResources().getColor(R.color.background_floating_material_dark));
+                                            miConGenerator.setRotation(90);
+                                            miConGenerator.setContentRotation(-90);
+                                            miConGenerator.setTextAppearance(R.style.iconGenText);
+                                            Marker label = gMap.addMarker(new MarkerOptions()
+                                                    .position(latLng)
+                                                    .icon(BitmapDescriptorFactory.fromBitmap(miConGenerator.makeIcon(title)))
+                                                    .flat(false)
+                                                    .anchor(0.0F, 0.8F));
+
+
+
                                             devices.add(device);
                                             markers.add(marker);
+                                            labels.add(label);
                                             if(latLng.latitude != 0 && latLng.longitude != 0)
                                                 builder.include(latLng);
                                         }
@@ -297,6 +327,10 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                                             gMap.moveCamera(CameraUpdateFactory.newLatLng(markers.get(itemSelected).getPosition()));
                                         }
                                     }
+
+                                    Log.e("DEVICES END:","{"+devices.size());
+                                    Log.e("MARKERS END:","{"+markers.size());
+                                    Log.e("ITEM SELECTED END:","{"+itemSelected);
 
                                     //Refresh RecyclerView From new DataSet
                                     mAdapter.notifyDataSetChanged();
@@ -317,7 +351,6 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                         }
 
                         Toast.makeText(getApplicationContext(), "ERROR" + error.networkResponse.statusCode, Toast.LENGTH_SHORT).show();
-
                         /*if(error.networkResponse.statusCode == 400){
                             mAccountView.setError("BAD REQUEST");
                         }else if(error.networkResponse.statusCode == 401){
@@ -329,13 +362,12 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                         }
                         showProgress(false);
                         */
-
                     }
                 }) {
             //Configurando Headers para que tome JSON
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
+                HashMap<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 headers.put("Authorization", userSession.getToken());
                 return headers;
@@ -347,7 +379,18 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        itemSelected = markers.indexOf(marker);
+        if(markers.contains(marker)){
+            if(prettyTime == null){
+                prettyTime = new PrettyTime();
+            }
+
+            itemSelected = markers.indexOf(marker);
+            Toast.makeText(getApplicationContext(), devices.get(itemSelected).getLastGPSTimestamp().toString(), Toast.LENGTH_SHORT).show();
+            marker.setSnippet(prettyTime.format(devices.get(itemSelected).getLastGPSTimestamp()));
+        }
+
+
+
         return false;
     }
 
@@ -379,17 +422,48 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     public void onPause(){
         super.onPause();
         handler.removeCallbacks(runnable);
-        Log.e("PAUSE", "PAUSE");
+        //Log.e("PAUSE", "PAUSE");
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-         cameraPosition = gMap.getCameraPosition();
-        Log.e("DESTROY", "DESTROY");
+        //Log.e("DESTROY", "DESTROY");
+    }
+
+    public int getArrowfromSpeed(double odometer){
+        if(odometer >= 0 && odometer < 8){
+            return R.drawable.ic_arrow_red;
+        }else if(odometer >= 8 && odometer < 32){
+            return R.drawable.ic_arrow_ambar;
+        } else if (odometer >= 32){
+            return R.drawable.ic_arrow_green;
+        }else{
+            return R.drawable.ic_arrow;
+        }
+    }
+
+    public void clearMarkers(){
+        for(Marker marker : markers){
+            marker.remove();
+        }
+        for(Marker label : labels){
+            label.remove();
+        }
+        markers.clear();
+        labels.clear();
     }
 
 
-
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        FragmentManager fm = getSupportFragmentManager();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("DEVICE", devices.get(markers.indexOf(marker)));
+        bundle.putSerializable("USER", userSession);
+        InfoDialogFragment mInfoDialogFrag = new InfoDialogFragment();
+        mInfoDialogFrag.setArguments(bundle);
+        mInfoDialogFrag.show(fm, "fragment_edit_name");
+    }
 }
 

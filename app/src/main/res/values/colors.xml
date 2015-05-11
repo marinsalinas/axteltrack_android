@@ -8,4 +8,20 @@
     <color name="secondaryText">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+
+
+    <color name= "background_dark">#ff6e6d6e</color>
+    <color name="background_light">#fff0eef1</color>
+    <color name= "transparent">#01f4fcff</color>
+
+
+
+    <color name= "background_dark_1">#ff757475</color>
+    <color name="background_light_1">#fff5f3f6</color>
+    <color name= "transparent_1">#14121215</color>
+
+    <color name= "background_dark_2">#ff454445</color>
+    <color name="background_light_2">#ff767477</color>
+    <color name= "transparent_2">#1409090c</color>
+
 </resources>

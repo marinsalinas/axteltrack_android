@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Connected Car</string>
+    <string name="app_name">AXTEL Track</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -33,5 +33,11 @@
     <string name="closeDrawer">DrawerClose</string>
     <string name="action_logout">Logout</string>
 
+    <string name="mobilize">Mobilize</string>
+    <string name="immobilize">Immobilize</string>
+    <string name="deviceID">Device ID</string>
+    <string name="lastReport">Last Report</string>
+    <string name="GPS">GPS</string>
+    <string name="speed">Speed</string>
 
 </resources>

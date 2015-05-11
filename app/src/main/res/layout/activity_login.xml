@@ -96,6 +96,7 @@
                     android:inputType="textPassword"
                     android:drawableLeft="@drawable/ic_password"
                     android:maxLines="1"
+                    android:fontFamily="sans serif"
                     android:singleLine="true"
                     app:met_textColor="@color/abc_primary_text_material_dark"
                     app:met_textColorHint="@color/accent"
