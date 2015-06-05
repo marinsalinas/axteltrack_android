@@ -39,5 +39,7 @@
     <string name="lastReport">Last Report</string>
     <string name="GPS">GPS</string>
     <string name="speed">Speed</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search Vehicle</string>
 
 </resources>

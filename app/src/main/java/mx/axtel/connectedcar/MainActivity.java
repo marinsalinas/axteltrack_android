@@ -1,8 +1,11 @@
 package mx.axtel.connectedcar;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,10 +62,14 @@ import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.Device;
 import mx.axtel.connectedcar.models.User;
 
+import com.quinny898.library.persistentsearch.SearchBox;
+import com.quinny898.library.persistentsearch.SearchResult;
+
 
 public class MainActivity extends ActionBarActivity implements RecyclerItemClicked, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener{
 
     private boolean mSlideSate = false;
+    private SearchBox search;
     private Toolbar toolbar;                              // Declaring the Toolbar Object
     private User userSession;
     private Gson gson;
@@ -96,6 +104,8 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
         prettyTime = new PrettyTime();
 
+        search = (SearchBox) findViewById(R.id.searchbox);
+        search.enableVoiceRecognition(this);
 
         /* Assinging the toolbar object ot the view
         and setting the the Action bar to our toolbar
@@ -158,6 +168,10 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+
+
+
         return true;
     }
 
@@ -175,6 +189,8 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
             new Session(this).logOut();
             startActivity(new Intent(getApplicationContext(), SplashScreen.class));
             finish();
+        }else if(id == R.id.action_search){
+            openSearch();
         }
 
         return super.onOptionsItemSelected(item);
@@ -465,5 +481,85 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         mInfoDialogFrag.setArguments(bundle);
         mInfoDialogFrag.show(fm, "fragment_edit_name");
     }
+
+    public void openSearch() {
+        toolbar.setTitle("");
+        search.revealFromMenuItem(R.id.action_search, this);
+        for(Device device : devices){
+            SearchResult option;
+            if (device.getDescription() != null && device.getDescription() != "") {
+                option = new SearchResult(device.getDescription(),getResources().getDrawable(R.drawable.circle_null));
+            } else if (device.getDisplayName() != null && device.getDisplayName() != "") {
+                //holder.textView.setText(devices.get(position).getDisplayName()); // Setting the Text with the array of our Titles
+                option = new SearchResult(device.getDisplayName(), getResources().getDrawable(R.drawable.circle_null));
+            } else {
+               // holder.textView.setText(devices.get(position).getDeviceID()); // Setting the Text with the array of our Titles
+                option = new SearchResult(device.getDeviceID(), getResources().getDrawable(R.drawable.circle_null));
+            }
+            search.addSearchable(option);
+        }
+        search.setMenuListener(new SearchBox.MenuListener() {
+
+            @Override
+            public void onMenuClick() {
+                // Hamburger has been clicked
+                Toast.makeText(MainActivity.this, "Menu click",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        });
+        search.setSearchListener(new SearchBox.SearchListener() {
+
+            @Override
+            public void onSearchOpened() {
+                // Use this to tint the screen
+
+            }
+
+            @Override
+            public void onSearchClosed() {
+                // Use this to un-tint the screen
+                closeSearch();
+            }
+
+            @Override
+            public void onSearchTermChanged() {
+                // React to the search term changing
+                // Called after it has updated results
+            }
+
+            @Override
+            public void onSearch(String searchTerm) {
+                Toast.makeText(MainActivity.this, searchTerm + " Searched",
+                        Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onSearchCleared() {
+
+            }
+
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1234 && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            search.populateEditText(matches);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    protected void closeSearch() {
+        search.hideCircularly(this);
+       // if(search.getSearchText().isEmpty())toolbar.setTitle("");
+        toolbar.setTitle("("+devices.size()+") "+userSession.getAccount());
+    }
+
+
 }
 
