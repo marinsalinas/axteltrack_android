@@ -105,7 +105,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         prettyTime = new PrettyTime();
 
         search = (SearchBox) findViewById(R.id.searchbox);
-        search.enableVoiceRecognition(this);
+        //search.enableVoiceRecognition(this);
 
         /* Assinging the toolbar object ot the view
         and setting the the Action bar to our toolbar
@@ -485,6 +485,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     public void openSearch() {
         toolbar.setTitle("");
         search.revealFromMenuItem(R.id.action_search, this);
+        search.clearSearchable();
         for(Device device : devices){
             SearchResult option;
             if (device.getDescription() != null && device.getDescription() != "") {
