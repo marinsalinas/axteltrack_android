@@ -531,9 +531,21 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
 
             @Override
             public void onSearch(String searchTerm) {
-                Toast.makeText(MainActivity.this, searchTerm + " Searched",
-                        Toast.LENGTH_LONG).show();
+                Device device = findDeviceByTitle(searchTerm);
 
+                if (device == null) {
+                    Toast.makeText(getApplicationContext(), "Device NOT FOUND", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
+                int position = devices.indexOf(device);
+
+                itemSelected = position;
+                if (gMap != null) {
+                    gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition(markers.get(position).getPosition(), 15F, 2F, 0F)));
+                    markers.get(position).showInfoWindow();
+                }
             }
 
             @Override
@@ -558,7 +570,29 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
     protected void closeSearch() {
         search.hideCircularly(this);
        // if(search.getSearchText().isEmpty())toolbar.setTitle("");
-        toolbar.setTitle("("+devices.size()+") "+userSession.getAccount());
+        toolbar.setTitle("(" + devices.size() + ") " + userSession.getAccount());
+    }
+
+
+
+    private Device findDeviceByTitle(String title){
+        for(Device device : devices){
+            String resultString = null;
+            if (device.getDescription() != null && device.getDescription() != "") {
+                resultString = device.getDescription();
+            } else if (device.getDisplayName() != null && device.getDisplayName() != "") {
+
+                resultString = device.getDisplayName();
+            } else {
+                resultString = device.getDeviceID();
+            }
+
+            if(resultString.equals(title)){
+                return device;
+            }
+        }
+
+        return null;
     }
 
 
