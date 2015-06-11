@@ -3,6 +3,7 @@ package mx.axtel.connectedcar.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import mx.axtel.connectedcar.HistoryActivity;
 import mx.axtel.connectedcar.R;
 import mx.axtel.connectedcar.models.Device;
 import mx.axtel.connectedcar.models.User;
@@ -47,6 +50,7 @@ import mx.axtel.connectedcar.models.User;
  */
 public class InfoDialogFragment extends DialogFragment implements View.OnClickListener {
     private TextView mTextView;
+    private ImageButton mImageButton;
     private ButtonFlat mbuttonMobilize;
     private ButtonFlat mbuttonImmobilize;
     private TextView mTextDevId;
@@ -73,6 +77,7 @@ public class InfoDialogFragment extends DialogFragment implements View.OnClickLi
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.device_info_dialog, null);
         mTextView = (TextView) view.findViewById(R.id.dialog_header);
+        mImageButton = (ImageButton) view.findViewById(R.id.eventdata_button);
         mTextDevId = (TextView) view.findViewById(R.id.dialog_devID);
         mTextLReport = (TextView) view.findViewById(R.id.dialog_lastGPS);
         mTextPosition = (TextView) view.findViewById(R.id.dialog_position);
@@ -82,6 +87,12 @@ public class InfoDialogFragment extends DialogFragment implements View.OnClickLi
 
         mbuttonMobilize.setOnClickListener(this);
         mbuttonImmobilize.setOnClickListener(this);
+        mImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().startActivity(new Intent(getActivity(), HistoryActivity.class));
+            }
+        });
 
         String title = null;
         if (this.device.getDescription() != null && this.device.getDescription() != "") {

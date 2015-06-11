@@ -41,5 +41,6 @@
     <string name="speed">Speed</string>
     <string name="search_title">Search</string>
     <string name="search_hint">Search Vehicle</string>
+    <string name="title_activity_history">HistoryActivity</string>
 
 </resources>
