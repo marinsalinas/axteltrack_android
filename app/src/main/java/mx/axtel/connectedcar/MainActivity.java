@@ -57,6 +57,7 @@ import java.util.Map;
 
 import mx.axtel.connectedcar.adapters.DrawerAdapter;
 import mx.axtel.connectedcar.fragments.InfoDialogFragment;
+import mx.axtel.connectedcar.helpers.MapHelper;
 import mx.axtel.connectedcar.helpers.NetworkHelper;
 import mx.axtel.connectedcar.helpers.Session;
 import mx.axtel.connectedcar.models.Device;
@@ -291,10 +292,10 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                                     for(int i = 0; i <devs.length() ; i++){
                                         final Device device = gson.fromJson(devs.getJSONObject(i).toString(), Device.class);
                                         if(device.isActive()){
-                                             int iconArrow = getArrowfromSpeed(device.getLastValidSpeedKPH());
+                                             int iconArrow = MapHelper.getArrowfromSpeed(device.getLastValidSpeedKPH());
                                             LatLng latLng = new LatLng(device.getLastValidLatitude(), device.getLastValidLongitude());
                                             Marker marker = gMap.addMarker(new MarkerOptions()
-                                                    .title(device.getDescription())
+                                                    .title(device.getLabel())
                                                     .snippet(prettyTime.format(device.getLastGPSTimestamp()))
                                                     .position(latLng)
                                                     .icon(BitmapDescriptorFactory.fromResource(iconArrow))
@@ -302,15 +303,8 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
                                                     .rotation((float) device.getLastValidHeading()));
 
                                             IconGenerator miConGenerator = new IconGenerator(getApplicationContext());
-                                            String title;
-                                            if(device.getDescription() != null && !device.getDescription().equals("")){
-                                                title = device.getDescription();
-                                            }else
-                                            if(device.getDisplayName() != null && !device.getDisplayName().equals("")){
-                                                title = device.getDisplayName();
-                                            }else{
-                                                title =  device.getDeviceID();
-                                            }
+                                            String title = device.getLabel();
+
                                             miConGenerator.setColor(getResources().getColor(R.color.background_floating_material_dark));
                                             miConGenerator.setRotation(90);
                                             miConGenerator.setContentRotation(-90);
@@ -447,17 +441,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         //Log.e("DESTROY", "DESTROY");
     }
 
-    public int getArrowfromSpeed(double odometer){
-        if(odometer >= 0 && odometer < 8){
-            return R.drawable.ic_arrow_red;
-        }else if(odometer >= 8 && odometer < 32){
-            return R.drawable.ic_arrow_ambar;
-        } else if (odometer >= 32){
-            return R.drawable.ic_arrow_green;
-        }else{
-            return R.drawable.ic_arrow;
-        }
-    }
+
 
     public void clearMarkers(){
         for(Marker marker : markers){

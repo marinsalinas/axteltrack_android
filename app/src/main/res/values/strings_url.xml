@@ -5,4 +5,5 @@
 
     <string name="mobilizeURL">http://104.236.63.58/api/v1/mobilize/</string>
     <string name="immobilizeURL">http://104.236.63.58/api/v1/immobilize/</string>
+    <string name="eventDataURL">http://104.236.63.58/api/v1/route/%1$s/?TimeFrom=%2$s\u0026TimeTo=%3$s</string>
 </resources>

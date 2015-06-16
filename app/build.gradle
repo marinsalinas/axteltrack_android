@@ -33,6 +33,7 @@ dependencies {
     compile 'org.ocpsoft.prettytime:prettytime:3.2.7.Final'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.quinny898.library.persistentsearch:library:1.0.0-SNAPSHOT'
+    compile 'com.github.flavienlaurent.datetimepicker:library:0.0.1'
 }
 
 

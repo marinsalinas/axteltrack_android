@@ -90,7 +90,9 @@ public class InfoDialogFragment extends DialogFragment implements View.OnClickLi
         mImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity().startActivity(new Intent(getActivity(), HistoryActivity.class));
+                Intent intent = new Intent(getActivity(), HistoryActivity.class);
+                intent.putExtra("Device", device);
+                getActivity().startActivity(intent);
             }
         });
 

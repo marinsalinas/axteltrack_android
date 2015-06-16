@@ -276,4 +276,16 @@ public class Device implements Serializable {
     public void setLastValidSpeedKPH(double lastValidSpeedKPH) {
         this.lastValidSpeedKPH = lastValidSpeedKPH;
     }
+
+
+    public String getLabel(){
+        if(this.getDescription() != null && !this.getDescription().equals("")){
+            return this.getDescription();
+        }else
+        if(this.getDisplayName() != null && !this.getDisplayName().equals("")){
+            return this.getDisplayName();
+        }else{
+            return  this.getDeviceID();
+        }
+    }
 }

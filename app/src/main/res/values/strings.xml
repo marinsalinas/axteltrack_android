@@ -43,4 +43,7 @@
     <string name="search_hint">Search Vehicle</string>
     <string name="title_activity_history">HistoryActivity</string>
 
+    <string name="history_initial_date">The date must be less than the final</string>
+    <string name = "history_range_date">The date range must be less than 5</string>
+
 </resources>
