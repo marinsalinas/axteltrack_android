@@ -39,7 +39,7 @@
             android:layout_marginBottom="0dp"
             android:paddingLeft="5dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="FROM"
+            android:text="@string/history_from"
             android:textStyle="bold"
             android:textColor="@color/common_signin_btn_dark_text_default"
             android:id="@+id/fromText" />
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="TO"
+            android:text="@string/history_to"
             android:textStyle="bold"
             android:textColor="@color/common_signin_btn_dark_text_default"
             android:layout_marginTop="5dp"
@@ -105,7 +105,7 @@
         <Button
             android:layout_width="243dp"
             android:layout_height="41dp"
-            android:text="SHOW"
+            android:text="@string/history_show"
             android:background="@color/primaryDark"
             android:textColor="@android:color/white"
             android:focusable="true"

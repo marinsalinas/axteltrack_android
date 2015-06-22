@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AXTEL Track</string>
+    <string name="action_logout">Cerrar Sesión</string>
+    <string name="action_settings">Configuración</string>
+    <string name="action_sign_in">Iniciar Sesión o Registrarse</string>
+    <string name="action_sign_in_short">Iniciar Sesión</string>
+    <string name="check_internet">Por favor verifique su conexión de internet e intente de nuevo</string>
+    <string name="command_sent">Comando enviado</string>
+    <string name="deviceID">ID del Dispositivo</string>
+    <string name="devices">Dispositivo</string>
+    <string name="error_field_required">Este campo es requerido</string>
+    <string name="error_forbidden">No tienes permisos para realizar esta petición</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="error_invalid_email">Es correo electrónico es invalido</string>
+    <string name="error_invalid_password">La contraseña es muy corta</string>
+    <string name="error_unable_login">No es posible iniciar sesión, verifica que los campos sean los correctos</string>
+    <string name="hello_world">Hola Mundo!</string>
+    <string name="history_initial_date">La fecha inicial debe ser menor que la final</string>
+    <string name="history_not_found">No fue encontrada la información, intenta con otro rango de fecha</string>
+    <string name="history_range_date">El rago de fecha no debe superar los 5 días</string>
+    <string name="immobilize">Inmovilizar</string>
+    <string name="lastReport">Ultimo Reporte</string>
+    <string name="mobilize">Movilizar</string>
+    <string name="please_wait">espere un momento</string>
+    <string name="prompt_account">cuenta</string>
+    <string name="prompt_email">correo electrónico</string>
+    <string name="prompt_password">Contraseña (opcional)</string>
+    <string name="prompt_psswd">contraseña</string>
+    <string name="prompt_username">nombre de usuario</string>
+    <string name="search_hint">Buscar dispositivo</string>
+    <string name="search_title">Buscar</string>
+    <string name="sure_command_send">¿Esta seguro de querer enviar este comando?</string>
+    <string name="speed">Velocidad</string>
+    <string name="title_activity_login">Iniciar Sesión</string>
+    <string name="history_from">DESDE</string>
+    <string name="history_to">HASTA</string>
+    <string name="history_show">MOSTRAR</string>
+</resources>

@@ -9,7 +9,7 @@
     <string name="prompt_account">account</string>
     <string name="prompt_username">username</string>
     <string name="prompt_psswd">password</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
 
 
 
@@ -20,8 +20,8 @@
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="plus_sign_out">Switch Google+ account</string>
-    <string name="plus_disconnect">Disconnect from Google+</string>
+    <string name="plus_sign_out" translatable="false">Switch Google+ account</string>
+    <string name="plus_disconnect" translatable="false">Disconnect from Google+</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -29,21 +29,30 @@
     <string name="error_unable_login">Unable to sign in, verify that the fields are correct</string>
     <string name="error_forbidden">You do not have permission to perform this request.</string>
     <string name="devices">Devices</string>
-    <string name="openDrawer">DrawerOpen</string>
-    <string name="closeDrawer">DrawerClose</string>
+    <string name="openDrawer" translatable="false">DrawerOpen</string>
+    <string name="closeDrawer" translatable="false">DrawerClose</string>
     <string name="action_logout">Logout</string>
 
     <string name="mobilize">Mobilize</string>
     <string name="immobilize">Immobilize</string>
     <string name="deviceID">Device ID</string>
     <string name="lastReport">Last Report</string>
-    <string name="GPS">GPS</string>
+    <string name="GPS" translatable="false">GPS</string>
     <string name="speed">Speed</string>
     <string name="search_title">Search</string>
-    <string name="search_hint">Search Vehicle</string>
-    <string name="title_activity_history">HistoryActivity</string>
+    <string name="search_hint">Search device</string>
+    <string name="title_activity_history" translatable="false">HistoryActivity</string>
 
     <string name="history_initial_date">The date must be less than the final</string>
     <string name = "history_range_date">The date range must be less than 5</string>
+    <string name="history_not_found">No information was found, try with another dates</string>
+
+    <string name="command_sent">Command sent</string>
+    <string name="sure_command_send">Are you sure you want to send this command?</string>
+    <string name="history_from">FROM</string>
+    <string name="history_to">TO</string>
+    <string name="history_show">SHOW</string>
+    <string name="API_KEY_DEV" translatable="false">AIzaSyBYx3mwf_WuXPY7hbu1RYtsim8NcFUBcMA</string>
+    <string name="API_KEY_SIGNED">AIzaSyC-NVTJ4ITQxL9WP26oeGPx8qX4G9lV2Cw</string>
 
 </resources>

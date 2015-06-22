@@ -53,11 +53,11 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <meta-data
+       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyBYx3mwf_WuXPY7hbu1RYtsim8NcFUBcMA"/>
+        android:value="@string/API_KEY_DEV"/>
 
-        <!--<meta-data
+       <!-- <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC-NVTJ4ITQxL9WP26oeGPx8qX4G9lV2Cw" />-->
 

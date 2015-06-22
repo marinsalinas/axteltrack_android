@@ -152,7 +152,7 @@ public class InfoDialogFragment extends DialogFragment implements View.OnClickLi
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(title)
-                .setMessage("Are you sure you want to send this command?")
+                .setMessage(getResources().getString(R.string.sure_command_send))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         sendCommand(command);
@@ -188,7 +188,7 @@ public class InfoDialogFragment extends DialogFragment implements View.OnClickLi
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                        Toast.makeText(getActivity(), "Comando Enviado", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), getResources().getString(R.string.command_sent), Toast.LENGTH_SHORT).show();
                     }
                 },
                 new Response.ErrorListener() {

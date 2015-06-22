@@ -27,6 +27,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -301,6 +302,9 @@ public class HistoryActivity extends ActionBarActivity implements OnCameraChange
                     final Date dateTo = dfmt.parse(textDateTo.getText() + " "+textTimeTo.getText());
                     Log.d("DATE-FROM", dateFrom.toString()+"  "+textDateFrom.getText() + " "+textTimeFrom.getText());
                     Log.d("DATE-TO", dateTo.toString()+"  "+textDateTo.getText() + " "+textTimeTo.getText());
+
+                    //return;
+
                     if(dateTo.getTime() - dateFrom.getTime() <= 0){
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.history_initial_date) , Toast.LENGTH_SHORT).show();
                     }else if(dateTo.getTime() - dateFrom.getTime() > 432000000){
@@ -312,8 +316,6 @@ public class HistoryActivity extends ActionBarActivity implements OnCameraChange
                         dateTo.getTime();
                         dateFrom.getTime();
                         final String apiKey = new Session(getApplicationContext()).getUserSession().getToken();
-                        //Toast.makeText(getApplicationContext(),  "\n"+dateFrom.getTime()+"\n"+dateTo.getTime()+"\n"+device.getUnitID()+"\n"+apiKey , Toast.LENGTH_SHORT).show();
-                        //TODO:Hacer una clase estatica interna que herede de ASyncktask
                         if(poly != null)poly.remove();
                         if(fromMarker != null)fromMarker.remove();
                         if(toMarker != null)toMarker.remove();
@@ -347,41 +349,47 @@ public class HistoryActivity extends ActionBarActivity implements OnCameraChange
                                     public void onResponse(JSONObject response) {
                                         Log.e("JSONDATE", response.toString());
                                         try {
-                                            JSONArray eventDats = response.getJSONArray("devices");
-                                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
-                                            PrettyTime prettyTime = new PrettyTime();
 
-                                            PolylineOptions polyOpts= new PolylineOptions();
-                                            polyOpts.geodesic(true);
-                                            polyOpts.color(Color.argb(90, 0, 87, 194));
-                                            polyOpts.zIndex(10000000000L);
-                                            for(int i = 0; i < eventDats.length(); i++){
-                                                EventData eventData = gson.fromJson(eventDats.getJSONObject(i).toString(),EventData.class);
+                                            if(!response.isNull("devices")) {
+                                                JSONArray eventDats = response.getJSONArray("devices");
+                                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                                Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
+                                                PrettyTime prettyTime = new PrettyTime();
 
-                                                Log.e("EVENTDATA", eventData.getTimestamp().toString());
-                                                int iconArrow = MapHelper.getArrowfromSpeed(eventData.getSpeedKPH());
-                                                LatLng latLng = new LatLng(eventData.getLatitude(), eventData.getLongitude());
-                                                Marker marker = gmap.addMarker(new MarkerOptions()
-                                                        .title("Event Data")
-                                                        .icon(BitmapDescriptorFactory.fromResource(iconArrow))
-                                                        .snippet(prettyTime.format(eventData.getTimestamp()))
-                                                        .flat(true)
-                                                        .position(latLng)
-                                                        .rotation((float) eventData.getHeading()));
+                                                PolylineOptions polyOpts = new PolylineOptions();
+                                                polyOpts.geodesic(true);
+                                                polyOpts.color(Color.argb(90, 0, 87, 194));
+                                                polyOpts.zIndex(10000000000L);
 
 
-                                                headings.add(marker);
-                                                if(latLng.latitude != 0 && latLng.longitude != 0) {
-                                                    builder.include(latLng);
-                                                    polyOpts.add(latLng);
+                                                for (int i = 0; i < eventDats.length(); i++) {
+                                                    EventData eventData = gson.fromJson(eventDats.getJSONObject(i).toString(), EventData.class);
+
+                                                    Log.e("EVENTDATA", eventData.getTimestamp().toString());
+                                                    int iconArrow = MapHelper.getArrowfromSpeed(eventData.getSpeedKPH());
+                                                    LatLng latLng = new LatLng(eventData.getLatitude(), eventData.getLongitude());
+                                                    Marker marker = gmap.addMarker(new MarkerOptions()
+                                                            .title("Event Data")
+                                                            .icon(BitmapDescriptorFactory.fromResource(iconArrow))
+                                                            .snippet(prettyTime.format(eventData.getTimestamp()))
+                                                            .flat(true)
+                                                            .position(latLng)
+                                                            .rotation((float) eventData.getHeading()));
+
+
+                                                    headings.add(marker);
+                                                    if (latLng.latitude != 0 && latLng.longitude != 0) {
+                                                        builder.include(latLng);
+                                                        polyOpts.add(latLng);
+                                                    }
+
                                                 }
 
+
+                                                poly = gmap.addPolyline(polyOpts);
+                                            }else{
+                                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.history_not_found),Toast.LENGTH_SHORT).show();
                                             }
-
-
-                                            poly = gmap.addPolyline(polyOpts);
-
                                             showProgress(false);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -394,6 +402,12 @@ public class HistoryActivity extends ActionBarActivity implements OnCameraChange
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
                                         Log.e("HAY ERROR", error.toString());
+                                        if(error instanceof TimeoutError){
+                                            Toast.makeText(getApplicationContext(), R.string.check_internet, Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+
+                                        Toast.makeText(getApplicationContext(), "ERROR" + error.networkResponse.statusCode, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                         ){
