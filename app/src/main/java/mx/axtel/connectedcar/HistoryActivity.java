@@ -29,6 +29,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -340,18 +341,18 @@ public class HistoryActivity extends ActionBarActivity implements OnCameraChange
                             e.printStackTrace();
                         }
 
-                        JsonObjectRequest req = new JsonObjectRequest(
+                        JsonArrayRequest req = new JsonArrayRequest(
                                 Request.Method.GET,
                                 getResources().getString(R.string.eventDataURL, device.getDeviceID(), URLEncoder.encode(sdf.format(dateFrom)), URLEncoder.encode(sdf.format(dateTo))),
                                 body,
-                                new Response.Listener<JSONObject>() {
+                                new Response.Listener<JSONArray>() {
                                     @Override
-                                    public void onResponse(JSONObject response) {
+                                    public void onResponse(JSONArray response) {
                                         Log.e("JSONDATE", response.toString());
                                         try {
 
-                                            if(!response.isNull("devices")) {
-                                                JSONArray eventDats = response.getJSONArray("devices");
+                                            if(response.length() <= 0 || response != null) {
+                                                JSONArray eventDats = response;
                                                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                                 Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
                                                 PrettyTime prettyTime = new PrettyTime();

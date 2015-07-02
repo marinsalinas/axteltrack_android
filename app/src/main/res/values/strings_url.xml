@@ -2,7 +2,6 @@
 <resources>
     <string name="auth_login" translatable="false">http://104.236.63.58/api/v1/auth/</string>
     <string name="device" translatable="false">http://104.236.63.58/api/v1/device/</string>
-
     <string name="mobilizeURL" translatable="false">http://104.236.63.58/api/v1/mobilize/</string>
     <string name="immobilizeURL" translatable="false">http://104.236.63.58/api/v1/immobilize/</string>
     <string name="eventDataURL" translatable="false">http://104.236.63.58/api/v1/route/%1$s/?TimeFrom=%2$s\u0026TimeTo=%3$s</string>

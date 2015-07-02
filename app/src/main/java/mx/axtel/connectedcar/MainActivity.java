@@ -31,6 +31,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -270,17 +271,18 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         //Prepare Requests
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-        JsonObjectRequest req = new JsonObjectRequest(
+        JsonArrayRequest req = new JsonArrayRequest(
                 Request.Method.GET,
                 getResources().getString(R.string.device),
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(final JSONObject response) {
+                    public void onResponse(final JSONArray response) {
+                        Log.e("RESONSE", "Entro al onResponse");
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    JSONArray devs = response.getJSONArray("devices");
+                                    JSONArray devs = response;
                                     if(devices == null) devices = new ArrayList<>();
                                     if(markers == null) markers = new ArrayList<>();
                                     if(labels == null) labels = new ArrayList<>();
