@@ -397,7 +397,7 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
             }
 
             itemSelected = markers.indexOf(marker);
-            Toast.makeText(getApplicationContext(), devices.get(itemSelected).getLastGPSTimestamp().toString(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), devices.get(itemSelected).getLastGPSTimestamp().toString(), Toast.LENGTH_SHORT).show();
             marker.setSnippet(prettyTime.format(devices.get(itemSelected).getLastGPSTimestamp()));
         }
 
@@ -415,8 +415,8 @@ public class MainActivity extends ActionBarActivity implements RecyclerItemClick
         runnable = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "DEVICEs", Toast.LENGTH_SHORT).show();
-                getDevices();
+               // Toast.makeText(getApplicationContext(), "DEVICEs", Toast.LENGTH_SHORT).show();
+
                 handler.postDelayed(this, 30000);
             }
         };

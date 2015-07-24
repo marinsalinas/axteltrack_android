@@ -53,6 +53,6 @@
     <string name="history_to">TO</string>
     <string name="history_show">SHOW</string>
     <string name="API_KEY_DEV" translatable="false">AIzaSyBYx3mwf_WuXPY7hbu1RYtsim8NcFUBcMA</string>
-    <string name="API_KEY_SIGNED">AIzaSyC-NVTJ4ITQxL9WP26oeGPx8qX4G9lV2Cw</string>
+    <string name="API_KEY_SIGNED" translatable="false">AIzaSyC-NVTJ4ITQxL9WP26oeGPx8qX4G9lV2Cw</string>
 
 </resources>
