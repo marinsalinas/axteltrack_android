@@ -204,6 +204,7 @@ public class LoginActivity extends Activity{
                                 }else if(error.networkResponse.statusCode == 403){
                                     mAccountView.setError(getResources().getString(R.string.error_forbidden));
                                 }else{
+                                    Log.e("ERROR", error.networkResponse.data.toString());
                                     mAccountView.setError(getResources().getString(R.string.error_unable_login));
                                 }
                                 showProgress(false);
